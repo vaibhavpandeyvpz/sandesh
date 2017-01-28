@@ -62,6 +62,23 @@ $uri = (new Sandesh\UriFactory())
     ->createUri('http://domain.tld:9090/subdir?test=true#phpunit');
 ```
 
+Bonus
+---
+```php
+<?php
+
+/**
+ * @desc Parse Set-Cookie header(s) and create an instance of Sandesh\CookieInterface.
+ */
+$cookie = (new Sandesh\CookieFactory())
+    ->createCookie('PHPSESS=1234567890; Domain=domain.tld; Expires=Wed, 21 Oct 2015 07:28:00 GMT; HttpOnly; Max-Age=86400; Path=/admin; Secure');
+
+/**
+ * @desc After making changes you can just cast it to a RFC-6265 valid string as show below.
+ */
+$header = (string)$cookie;
+```
+
 License
 ---
 See [LICENSE.md][license-url] file.

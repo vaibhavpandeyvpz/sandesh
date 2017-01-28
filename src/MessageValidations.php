@@ -32,6 +32,19 @@ class MessageValidations
     const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~\pL';
 
     /**
+     * @param string $value
+     */
+    public static function assertCookieExpiry($value)
+    {
+        if (!($value instanceof \DateTime) && !is_string($value) && !is_int($value)) {
+            throw new \InvalidArgumentException(
+                "Cookie expiry must be string, int or an instance of \\DateTime; '%s' given",
+                is_object($value) ? get_class($value) : gettype($value)
+            );
+        }
+    }
+
+    /**
      * @param string $name
      */
     public static function assertHeaderName($name)
@@ -131,6 +144,22 @@ class MessageValidations
                     is_scalar($file) ? gettype($file) : get_class($file)
                 ));
             }
+        }
+    }
+
+    /**
+     * @param \DateTimeInterface|int|null $value
+     * @return string
+     */
+    public static function normalizeCookieExpiry($value)
+    {
+        if (is_string($value)) {
+            $value = \DateTime::createFromFormat(Cookie::EXPIRY_FORMAT, $value);
+        } elseif (is_int($value)) {
+            $value = \DateTime::createFromFormat('U', $value);
+        }
+        if ($value instanceof \DateTime) {
+            return $value;
         }
     }
 
