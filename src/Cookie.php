@@ -218,7 +218,7 @@ class Cookie implements CookieInterface
      */
     public function __toString()
     {
-        $params = array("{$this->name}={$this->value}");
+        $params = array($this->name . '=' . urlencode($this->value));
         if ($this->domain) {
             $params[] = "Domain={$this->domain}";
         }
