@@ -21,6 +21,7 @@ interface ResponseSenderInterface
 {
     /**
      * @param ResponseInterface $response
+     * @param int $obl
      */
-    public function send(ResponseInterface $response);
+    public function send(ResponseInterface $response, $obl= null);
 }

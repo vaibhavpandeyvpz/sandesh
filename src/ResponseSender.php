@@ -22,10 +22,16 @@ class ResponseSender implements ResponseSenderInterface
     /**
      * {@inheritdoc}
      */
-    public function send(ResponseInterface $response)
+    public function send(ResponseInterface $response, $obl = null)
     {
         if (headers_sent()) {
             throw new \RuntimeException('Not sending response as headers already sent');
+        }
+        if (is_null($obl)) {
+            $obl = ob_get_level();
+        }
+        while (ob_get_level() > $obl) {
+            ob_end_flush();
         }
         $this->sendStatusLine($response);
         $this->sendHeaders($response);
