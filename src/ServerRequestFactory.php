@@ -57,13 +57,19 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
             if (!$value) {
                 continue;
             }
+            if (strpos($key, 'REDIRECT_') === 0) {
+                $key = substr($key, 9);
+                if (array_key_exists($key, $server)) {
+                    continue;
+                }
+            }
             foreach ($pick as $prefix) {
                 if (strpos($key, $prefix) === 0) {
-                    $name = strtolower(substr($key, strlen($prefix)));
                     if ($prefix !== $pick[0]) {
-                        $name = strtr($name, '_', '-');
+                        $key = substr($key, strlen($prefix));
                     }
-                    $headers[$name] = $value;
+                    $key = strtolower(strtr($key, '_', '-'));
+                    $headers[$key] = $value;
                     continue;
                 }
             }
