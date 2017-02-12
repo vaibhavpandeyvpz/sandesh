@@ -19,6 +19,10 @@ use Psr\Http\Message\UploadedFileInterface;
  */
 class MessageValidations
 {
+    const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
+
+    const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~\pL';
+
     /**
      * MessageValidations constructor.
      * @codeCoverageIgnore
@@ -27,12 +31,8 @@ class MessageValidations
     {
     }
 
-    const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
-
-    const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~\pL';
-
     /**
-     * @param string $value
+     * @param mixed $value
      */
     public static function assertCookieExpiry($value)
     {
@@ -72,7 +72,7 @@ class MessageValidations
      */
     public static function assertMethod($value)
     {
-        if (!in_array($value, array('GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'TRACE', 'OPTIONS', 'CONNECT', 'PATCH'))) {
+        if (!in_array($value, array('CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE'))) {
             throw new \InvalidArgumentException("'{$value}' is not a valid HTTP method");
         }
     }
@@ -148,7 +148,7 @@ class MessageValidations
     }
 
     /**
-     * @param \DateTimeInterface|int|null $value
+     * @param \DateTimeInterface|string|int|null $value
      * @return string
      */
     public static function normalizeCookieExpiry($value)

@@ -59,7 +59,7 @@ interface CookieInterface
     public function withDomain($domain);
 
     /**
-     * @param \DateTimeInterface|string|null $expiry
+     * @param \DateTimeInterface|string|int|null $expiry
      * @return static
      */
     public function withExpiry($expiry);

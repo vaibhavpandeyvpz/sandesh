@@ -147,7 +147,9 @@ class Cookie implements CookieInterface
      */
     public function withExpiry($expiry)
     {
-        MessageValidations::assertCookieExpiry($expiry);
+        if (null !== $expiry) {
+            MessageValidations::assertCookieExpiry($expiry);
+        }
         $clone = clone $this;
         $clone->expiry = MessageValidations::normalizeCookieExpiry($expiry);
         return $clone;
