@@ -33,6 +33,9 @@ class ResponseSender implements ResponseSenderInterface
         while (ob_get_level() > $obl) {
             ob_end_flush();
         }
+        if (!$response->hasHeader('Content-Length') && is_int($size = $response->getBody()->getSize())) {
+            $response = $response->withHeader('Content-Length', (string)$size);
+        }
         $this->sendStatusLine($response);
         $this->sendHeaders($response);
         $this->sendBody($response);
