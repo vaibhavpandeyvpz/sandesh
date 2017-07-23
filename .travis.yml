@@ -8,7 +8,7 @@ branches:
 cache:
     directories: $HOME/.composer/cache
 
-dist: trusty
+dist: precise
 
 install: travis_retry composer install --dev --no-interaction --prefer-dist
 
