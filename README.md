@@ -33,7 +33,7 @@ $request = (new Sandesh\RequestFactory())
  * @desc Creates an instance of Psr\Http\Message\ServerRequestInterface.
  */
 $request = (new Sandesh\ServerRequestFactory())
-    ->createServerRequest($_SERVER);
+    ->createServerRequestFromArray($_SERVER);
 
 /**
  * @desc Creates an instance of Psr\Http\Message\ResponseInterface.
