@@ -79,7 +79,8 @@ class CookieTest extends \PHPUnit_Framework_TestCase
         $cookie = new Cookie('PHPSESS');
         $expected = sprintf(
             'PHPSESS=1234567890; Domain=domain.tld; Expires=%s; HttpOnly; Max-Age=86400; Path=/admin; Secure',
-            $time->format(Cookie::EXPIRY_FORMAT));
+            $time->format(Cookie::EXPIRY_FORMAT)
+        );
         $this->assertEquals($expected, (string)$cookie->withValue('1234567890')
             ->withDomain('domain.tld')
             ->withExpiry($time)

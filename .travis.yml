@@ -8,6 +8,8 @@ branches:
 cache:
     directories: $HOME/.composer/cache
 
+dist: trusty
+
 install: travis_retry composer install --dev --no-interaction --prefer-dist
 
 language: php
@@ -19,6 +21,5 @@ php:
     - 5.6
     - 7.0
     - 7.1
-    - hhvm
 
 script: vendor/bin/phpunit
