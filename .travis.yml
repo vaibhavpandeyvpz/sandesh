@@ -10,7 +10,7 @@ cache:
 
 dist: precise
 
-install: travis_retry composer install --dev --no-interaction --prefer-dist
+install: travis_retry composer install --no-interaction --prefer-dist
 
 language: php
 
