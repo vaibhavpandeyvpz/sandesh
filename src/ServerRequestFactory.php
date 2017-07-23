@@ -24,16 +24,24 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createServerRequest(array $server, $method = null, $uri = null)
+    public function createServerRequest($method, $uri)
     {
         if (is_string($uri)) {
             $factory = new UriFactory();
             $uri = $factory->createUri($uri);
         }
+        return new ServerRequest($method, $uri);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createServerRequestFromArray(array $server)
+    {
         $body = self::getPhpInputStream();
-        $method = $method ?: $server['REQUEST_METHOD'];
+        $method = $server['REQUEST_METHOD'];
         $protocolVersion = self::getProtocolVersion($server);
-        $uri = $uri ?: self::getUri($server);
+        $uri = self::getUri($server);
         $request = new ServerRequest($method, $uri);
         $request = $request->withBody($body)
             ->withProtocolVersion($protocolVersion)
