@@ -1,5 +1,5 @@
 # vaibhavpandeyvpz/sandesh
-[PSR-7](https://github.com/php-fig/http-message) and [PSR-17](https://github.com/php-fig/fig-standards/blob/master/proposed/http-factory/http-factory.md) (Draft) implementation, works with [PHP](http://php.net) >= 7.0.
+[PSR-7](https://github.com/php-fig/http-message) and [PSR-17](https://github.com/php-fig/fig-standards/blob/master/proposed/http-factory/http-factory.md) implementation, works with [PHP](http://php.net) >= 7.0.
 
 > Sandesh: `संदेश` (message)
 
