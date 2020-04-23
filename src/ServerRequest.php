@@ -13,6 +13,7 @@ namespace Sandesh;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Class ServerRequest
@@ -49,6 +50,18 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @var UploadedFileInterface[]
      */
     protected $uploadedFiles = array();
+
+    /**
+     * Request constructor.
+     * @param string $method
+     * @param UriInterface $uri
+     * @param array $serverParams
+     */
+    public function __construct($method = 'GET', UriInterface $uri = null, array $serverParams = [])
+    {
+        parent::__construct($method, $uri);
+        $this->serverParams = $serverParams;
+    }
 
     /**
      * {@inheritdoc}
@@ -89,17 +102,25 @@ class ServerRequest extends Request implements ServerRequestInterface
         $body = (string)$this->getBody();
         switch ($type) {
             case 'application/json':
-                $this->parsedBody = json_decode($body, true);
+                if (extension_loaded('json')) {
+                    /** @noinspection PhpComposerExtensionStubsInspection */
+                    $this->parsedBody = json_decode($body, true);
+                }
                 break;
             case 'application/x-www-form-urlencoded':
                 parse_str($body, $data);
                 $this->parsedBody = $data;
                 break;
             case 'text/xml':
-                $disabled = libxml_disable_entity_loader(true);
-                $xml = simplexml_load_string($body);
-                libxml_disable_entity_loader($disabled);
-                $this->parsedBody = $xml;
+                if (extension_loaded('libxml')) {
+                    /** @noinspection PhpComposerExtensionStubsInspection */
+                    $disabled = libxml_disable_entity_loader(true);
+                    /** @noinspection PhpComposerExtensionStubsInspection */
+                    $xml = simplexml_load_string($body);
+                    /** @noinspection PhpComposerExtensionStubsInspection */
+                    libxml_disable_entity_loader($disabled);
+                    $this->parsedBody = $xml;
+                }
                 break;
             default:
                 break;

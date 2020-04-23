@@ -119,7 +119,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
     public function testPathWithQuery()
     {
         $uri = new Uri();
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         $uri->withPath('/subdir?test=true')
             ->getPath();
     }
@@ -127,7 +127,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
     public function testPathWithFragment()
     {
         $uri = new Uri();
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         $uri->withPath('/subdir#phpunit')
             ->getPath();
     }
@@ -146,7 +146,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
     public function testPortInvalid()
     {
         $uri = new Uri();
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         $uri->withPort(-999);
     }
 
@@ -174,7 +174,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
     public function testQueryInvalid()
     {
         $uri = new Uri();
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         $uri->withQuery('test=true#phpunit');
     }
 

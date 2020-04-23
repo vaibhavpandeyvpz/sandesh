@@ -22,5 +22,8 @@ class ResponseFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ResponseFactory();
         $this->assertEquals(200, $factory->createResponse()->getStatusCode());
         $this->assertEquals(404, $factory->createResponse(404)->getStatusCode());
+        $response = $factory->createResponse(401, 'Unauthorised');
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals('Unauthorised', $response->getReasonPhrase());
     }
 }

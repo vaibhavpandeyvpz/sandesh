@@ -19,7 +19,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
 {
     public function testBody()
     {
-        $response = new Response(200, $body = new Stream());
+        $response = new Response(200, '', $body = new Stream());
         $this->assertSame($body, $response->getBody());
     }
 
@@ -46,7 +46,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     public function testStatusInvalid()
     {
         $response = new Response();
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         $response->withStatus(600);
     }
 }

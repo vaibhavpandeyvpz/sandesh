@@ -139,13 +139,13 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
             ->withHeader('Content-Type', 'text/xml');
         /** @var \SimpleXMLElement $parsedBody */
         $parsedBody = $request->getParsedBody();
-        $this->assertInstanceOf('SimpleXMLElement', $parsedBody);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $parsedBody);
         $this->assertEquals(2, $parsedBody->count());
         $this->assertEquals('vpz', $parsedBody->username);
         $this->assertEquals('121', $parsedBody->id);
         $body->close();
         $parsedBody = $request->getParsedBody();
-        $this->assertInstanceOf('SimpleXMLElement', $parsedBody);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $parsedBody);
         $this->assertEquals(2, $parsedBody->count());
         $this->assertEquals('vpz', $parsedBody->username);
         $this->assertEquals('121', $parsedBody->id);
@@ -199,7 +199,7 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
             $request->withUploadedFiles($files)
                 ->getUploadedFiles()
         );
-        $this->setExpectedException('UnexpectedValueException');
+        $this->setExpectedException(\UnexpectedValueException::class);
         $request->withUploadedFiles(array('something.txt'));
     }
 }

@@ -11,6 +11,10 @@
 
 namespace Sandesh;
 
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
+use Psr\Http\Message\UploadedFileInterface;
+
 /**
  * Class UploadedFileFactoryTest
  * @package Sandesh
@@ -25,12 +29,19 @@ class UploadedFileFactoryTest extends \PHPUnit_Framework_TestCase
     public function testUploadedFile()
     {
         $factory = new UploadedFileFactory();
-        $file = $factory->createUploadedFile(__FILE__, $size = filesize(__FILE__), UPLOAD_ERR_OK, $name = basename(__FILE__), 'text/plain');
-        $this->assertInstanceOf('Psr\\Http\\Message\\UploadedFileInterface', $file);
+        $stream = (new StreamFactory())
+            ->createStreamFromFile(__FILE__);
+        $file = $factory->createUploadedFile(
+            $stream,
+            $size = filesize(__FILE__),
+            UPLOAD_ERR_OK,
+            $name = basename(__FILE__),
+            'text/plain');
+        $this->assertInstanceOf(UploadedFileInterface::class, $file);
         $this->assertEquals($name, $file->getClientFilename());
         $this->assertEquals('text/plain', $file->getClientMediaType());
         $this->assertEquals(UPLOAD_ERR_OK, $file->getError());
         $this->assertEquals($size, $file->getSize());
-        $this->assertInstanceOf('Psr\\Http\\Message\\StreamInterface', $file->getStream());
+        $this->assertInstanceOf(StreamInterface::class, $file->getStream());
     }
 }

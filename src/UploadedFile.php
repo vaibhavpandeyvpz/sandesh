@@ -59,7 +59,7 @@ class UploadedFile implements UploadedFileInterface
 
     /**
      * UploadedFile constructor.
-     * @param string|resource $file
+     * @param StreamInterface|string|resource $file
      * @param int $size
      * @param int $error
      * @param string $clientFilename

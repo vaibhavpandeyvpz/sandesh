@@ -11,6 +11,8 @@
 
 namespace Sandesh;
 
+use Psr\Http\Message\StreamInterface;
+
 /**
  * Class UploadedFileTest
  * @package Sandesh
@@ -24,24 +26,24 @@ class UploadedFileTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('text/plain', $file->getClientMediaType());
         $this->assertEquals(UPLOAD_ERR_OK, $file->getError());
         $this->assertEquals(128, $file->getSize());
-        $this->assertInstanceOf('Psr\\Http\\Message\\StreamInterface', $file->getStream());
+        $this->assertInstanceOf(StreamInterface::class, $file->getStream());
     }
 
     public function testCreationInvalidFile()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         new UploadedFile(1, '128', UPLOAD_ERR_OK);
     }
 
     public function testCreationInvalidSize()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         new UploadedFile('php://memory', '128', UPLOAD_ERR_OK);
     }
 
     public function testCreationInvalidError()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         new UploadedFile('php://memory', '128', UPLOAD_ERR_EXTENSION + 1);
     }
 
@@ -53,7 +55,7 @@ class UploadedFileTest extends \PHPUnit_Framework_TestCase
         fclose($file);
         $file = new UploadedFile($source, filesize($source), UPLOAD_ERR_OK, 'something.txt', 'text/plain');
         $file->moveTo(tempnam(sys_get_temp_dir(), 'sandesh'));
-        $this->setExpectedException('RuntimeException');
+        $this->setExpectedException(\RuntimeException::class);
         $file->moveTo(tempnam(sys_get_temp_dir(), 'sandesh'));
     }
 }

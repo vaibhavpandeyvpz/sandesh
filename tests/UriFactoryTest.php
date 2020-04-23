@@ -11,6 +11,8 @@
 
 namespace Sandesh;
 
+use Psr\Http\Message\UriInterface;
+
 /**
  * Class UriFactoryTest
  * @package Sandesh
@@ -20,10 +22,10 @@ class UriFactoryTest extends \PHPUnit_Framework_TestCase
     public function testUri()
     {
         $factory = new UriFactory();
-        $this->assertInstanceOf('Psr\\Http\\Message\\UriInterface', $uri = $factory->createUri());
+        $this->assertInstanceOf(UriInterface::class, $uri = $factory->createUri());
         $this->assertEmpty((string)$uri);
         $uri = $factory->createUri($url = 'http://someone:secret@domain.tld:9090/subdir?test=true#phpunit');
-        $this->assertInstanceOf('Psr\\Http\\Message\\UriInterface', $uri);
+        $this->assertInstanceOf(UriInterface::class, $uri);
         $this->assertEquals('http', $uri->getScheme());
         $this->assertEquals('someone:secret', $uri->getUserInfo());
         $this->assertEquals('domain.tld', $uri->getHost());
@@ -38,7 +40,7 @@ class UriFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testUriInvalidString()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         $factory = new UriFactory();
         $factory->createUri('http:///domain.tld/');
     }

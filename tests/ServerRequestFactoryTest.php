@@ -11,6 +11,7 @@
 
 namespace Sandesh;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -23,19 +24,19 @@ class ServerRequestFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $factory = new ServerRequestFactory();
         $request = $factory->createServerRequest('POST', 'http://domain.tld:9090/subdir?test=true#phpunit');
-        $this->assertInstanceOf('Psr\\Http\\Message\\ServerRequestInterface', $request);
+        $this->assertInstanceOf(ServerRequestInterface::class, $request);
         $this->assertEquals('1.1', $request->getProtocolVersion());
-        $this->assertInstanceOf('Psr\\Http\\Message\\UriInterface', $request->getUri());
+        $this->assertInstanceOf(UriInterface::class, $request->getUri());
         $this->assertEquals('POST', $request->getMethod());
         $this->assertEquals('domain.tld', $request->getUri()->getHost());
         $this->assertEquals(9090, $request->getUri()->getPort());
         $this->assertEquals('http://domain.tld:9090/subdir?test=true#phpunit', (string)$request->getUri());
     }
 
-    public function testCreateServerRequestFromArray()
+    public function testCreateServerRequestWithServerParams()
     {
         $factory = new ServerRequestFactory();
-        $request = $factory->createServerRequestFromArray(array(
+        $request = $factory->createServerRequest('POST', 'http://domain.tld:9090/subdir?test=true#phpunit', array(
             'CONTENT_LENGTH' => '128',
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
             'HTTP_HOST' => 'domain.tld:9090',
@@ -48,14 +49,14 @@ class ServerRequestFactoryTest extends \PHPUnit_Framework_TestCase
             'SERVER_PORT' => '9090',
             'SERVER_PROTOCOL' => 'HTTP/1.0',
         ));
-        $this->assertInstanceOf('Psr\\Http\\Message\\ServerRequestInterface', $request);
+        $this->assertInstanceOf(ServerRequestInterface::class, $request);
         $this->assertEquals('1.0', $request->getProtocolVersion());
-        $this->assertInstanceOf('Psr\\Http\\Message\\UriInterface', $request->getUri());
-        $this->assertEquals('128', $request->getHeaderLine('Content-Length'));
-        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
+        $this->assertInstanceOf(UriInterface::class, $request->getUri());
         $this->assertEquals('POST', $request->getMethod());
         $this->assertEquals('domain.tld', $request->getUri()->getHost());
         $this->assertEquals(9090, $request->getUri()->getPort());
         $this->assertEquals('http://domain.tld:9090/subdir?test=true#phpunit', (string)$request->getUri());
+        $this->assertEquals('128', $request->getHeaderLine('Content-Length'));
+        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
     }
 }

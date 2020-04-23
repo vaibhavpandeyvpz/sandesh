@@ -12,6 +12,7 @@
 namespace Sandesh;
 
 use Interop\Http\Factory\StreamFactoryInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Class StreamFactoryTest
@@ -32,7 +33,7 @@ class StreamFactoryTest extends \PHPUnit_Framework_TestCase
     public function testStream()
     {
         $this->assertInstanceOf(
-            'Psr\\Http\\Message\\StreamInterface',
+            StreamInterface::class,
             $stream = $this->factory->createStream()
         );
         $this->assertEmpty($stream->getContents());
@@ -43,7 +44,7 @@ class StreamFactoryTest extends \PHPUnit_Framework_TestCase
     public function testStreamFromString()
     {
         $this->assertInstanceOf(
-            'Psr\\Http\\Message\\StreamInterface',
+            StreamInterface::class,
             $stream = $this->factory->createStream($text = 'Hello')
         );
         $this->assertEquals($text, (string)$stream);
@@ -52,7 +53,7 @@ class StreamFactoryTest extends \PHPUnit_Framework_TestCase
     public function testStreamFromFile()
     {
         $this->assertInstanceOf(
-            'Psr\\Http\\Message\\StreamInterface',
+            StreamInterface::class,
             $stream = $this->factory->createStreamFromFile(__FILE__, 'r')
         );
         $this->assertNotEmpty($text = $stream->read(5));
@@ -64,7 +65,7 @@ class StreamFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $handle = fopen(__FILE__, 'r');
         $this->assertInstanceOf(
-            'Psr\\Http\\Message\\StreamInterface',
+            StreamInterface::class,
             $stream = $this->factory->createStreamFromResource($handle)
         );
         $this->assertNotEmpty($text = $stream->read(5));

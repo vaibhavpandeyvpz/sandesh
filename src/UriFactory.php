@@ -11,7 +11,8 @@
 
 namespace Sandesh;
 
-use Interop\Http\Factory\UriFactoryInterface;
+use Psr\Http\Message\UriFactoryInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Class UriFactory
@@ -22,7 +23,7 @@ class UriFactory implements UriFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createUri($uri = '')
+    public function createUri(string $uri = ''): UriInterface
     {
         $obj = new Uri();
         if (empty($uri)) {

@@ -23,16 +23,16 @@ class MessageAbstractTest extends \PHPUnit_Framework_TestCase
     public function testBody()
     {
         /** @var MessageInterface $message */
-        $message = $this->getMockForAbstractClass('Sandesh\\MessageAbstract');
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
         $this->assertNull($message->getBody());
-        $body = $this->getMockBuilder('Psr\\Http\\Message\\StreamInterface')->getMock();
+        $body = $this->getMockBuilder(StreamInterface::class)->getMock();
         $this->assertSame($body, $message->withBody($body)->getBody());
     }
 
     public function testHeaders()
     {
         /** @var MessageInterface $message */
-        $message = $this->getMockForAbstractClass('Sandesh\\MessageAbstract');
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
         $message = $message->withHeader('Content-Length', '128');
         $this->assertInternalType('array', $message->getHeaders());
         $this->assertCount(1, $message->getHeaders());
@@ -77,7 +77,7 @@ class MessageAbstractTest extends \PHPUnit_Framework_TestCase
     public function testHeadersCaseInsensitive()
     {
         /** @var MessageInterface $message */
-        $message = $this->getMockForAbstractClass('Sandesh\\MessageAbstract');
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
         $message = $message->withHeader('Content-Length', $length = '128')
             ->withHeader('Content-Type', $type = 'text/html; charset=utf-8');
         $this->assertTrue($message->hasHeader('Content-Length'));
@@ -109,23 +109,23 @@ class MessageAbstractTest extends \PHPUnit_Framework_TestCase
     public function testHeaderInvalidName()
     {
         /** @var MessageInterface $message */
-        $message = $this->getMockForAbstractClass('Sandesh\\MessageAbstract');
-        $this->setExpectedException('InvalidArgumentException');
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
+        $this->setExpectedException(\InvalidArgumentException::class);
         $message->withHeader('Some-Invalid<Name', 'Value');
     }
 
     public function testHeaderInvalidValue()
     {
         /** @var MessageInterface $message */
-        $message = $this->getMockForAbstractClass('Sandesh\\MessageAbstract');
-        $this->setExpectedException('InvalidArgumentException');
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
+        $this->setExpectedException(\InvalidArgumentException::class);
         $message->withHeader('Some-Header', "Value\r\n");
     }
 
     public function testProtocolVersion()
     {
         /** @var MessageInterface $message */
-        $message = $this->getMockForAbstractClass('Sandesh\\MessageAbstract');
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
         $this->assertNotEmpty($message->getProtocolVersion());
         $this->assertEquals('1.1', $message->getProtocolVersion());
         $this->assertEquals(
@@ -138,7 +138,7 @@ class MessageAbstractTest extends \PHPUnit_Framework_TestCase
             $message->withProtocolVersion('1.1')
                 ->getProtocolVersion()
         );
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         $message->withProtocolVersion('10.0');
     }
 }

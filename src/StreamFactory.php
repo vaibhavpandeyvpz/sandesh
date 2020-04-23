@@ -11,7 +11,8 @@
 
 namespace Sandesh;
 
-use Interop\Http\Factory\StreamFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Class StreamFactory
@@ -22,11 +23,11 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createStream($contents = '')
+    public function createStream(string $content = ''): StreamInterface
     {
         $stream = new Stream();
-        if ($contents) {
-            $stream->write($contents);
+        if ($content) {
+            $stream->write($content);
         }
         return $stream;
     }
@@ -34,7 +35,7 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createStreamFromFile($filename, $mode = 'r')
+    public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
         return new Stream($filename, $mode);
     }
@@ -42,7 +43,7 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createStreamFromResource($resource)
+    public function createStreamFromResource($resource): StreamInterface
     {
         return new Stream($resource);
     }

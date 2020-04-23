@@ -11,7 +11,9 @@
 
 namespace Sandesh;
 
-use Interop\Http\Factory\UploadedFileFactoryInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Class UploadedFileFactory
@@ -22,8 +24,14 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createUploadedFile($file, $size = null, $error = UPLOAD_ERR_OK, $clientFilename = null, $clientMediaType = null)
+    public function createUploadedFile(
+        StreamInterface $stream,
+        int $size = null,
+        int $error = \UPLOAD_ERR_OK,
+        string $clientFilename = null,
+        string $clientMediaType = null
+    ): UploadedFileInterface
     {
-        return new UploadedFile($file, (int)$size, (int)$error, $clientFilename, $clientMediaType);
+        return new UploadedFile($stream, (int)$size, (int)$error, $clientFilename, $clientMediaType);
     }
 }

@@ -1,5 +1,5 @@
 # vaibhavpandeyvpz/sandesh
-[PSR-7](https://github.com/php-fig/http-message) and [PSR-17](https://github.com/php-fig/fig-standards/blob/master/proposed/http-factory/http-factory.md) (Draft) implementation, works with [PHP](http://php.net) >= 5.3.
+[PSR-7](https://github.com/php-fig/http-message) and [PSR-17](https://github.com/php-fig/fig-standards/blob/master/proposed/http-factory/http-factory.md) (Draft) implementation, works with [PHP](http://php.net) >= 7.0.
 
 > Sandesh: `संदेश` (message)
 
@@ -33,7 +33,7 @@ $request = (new Sandesh\RequestFactory())
  * @desc Creates an instance of Psr\Http\Message\ServerRequestInterface.
  */
 $request = (new Sandesh\ServerRequestFactory())
-    ->createServerRequestFromArray($_SERVER);
+    ->createServerRequest('POST', 'https://api.example.com/user/save', $_SERVER);
 
 /**
  * @desc Creates an instance of Psr\Http\Message\ResponseInterface.
@@ -54,6 +54,19 @@ $stream = (new Sandesh\StreamFactory())
 // or
 $stream = (new Sandesh\StreamFactory())
     ->createStreamFromResource(fopen('php://input', 'r'));
+
+/**
+ * @desc Creates an instance of Psr\Http\Message\UploadedFileInterface.
+ */
+$stream = (new Sandesh\StreamFactory())
+    ->createStreamFromFile($_FILES[0]['tmp_name']);
+$request = (new Sandesh\UploadedFileFactory())
+    ->createUploadedFile(
+        $stream,
+        $_FILES[0]['size'],
+        $_FILES[0]['error'],
+        $_FILES[0]['name'],
+        $_FILES[0]['type']);
 
 /**
  * @desc Creates an instance of Psr\Http\Message\UriInterface.

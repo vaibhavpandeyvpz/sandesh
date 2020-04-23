@@ -11,6 +11,8 @@
 
 namespace Sandesh;
 
+use Psr\Http\Message\StreamInterface;
+
 /**
  * Class StreamTest
  * @package Sandesh
@@ -20,14 +22,14 @@ class StreamTest extends \PHPUnit_Framework_TestCase
     public function testStreamCreation()
     {
         $this->assertInstanceOf(
-            'Psr\\Http\\Message\\StreamInterface',
+            StreamInterface::class,
             new Stream()
         );
         $this->assertInstanceOf(
-            'Psr\\Http\\Message\\StreamInterface',
+            StreamInterface::class,
             new Stream(fopen('php://memory', 'w+'))
         );
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(\InvalidArgumentException::class);
         new Stream(9999);
     }
 
@@ -85,7 +87,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $stream->rewind();
         $this->assertEquals('Something', $stream->getContents());
         $stream->detach();
-        $this->setExpectedException('RuntimeException');
+        $this->setExpectedException(\RuntimeException::class);
         $stream->getContents();
     }
 
@@ -120,7 +122,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
     {
         $stream = new Stream('php://memory');
         $stream->close();
-        $this->setExpectedException('RuntimeException');
+        $this->setExpectedException(\RuntimeException::class);
         $stream->read(1);
     }
 
@@ -146,7 +148,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $stream = new Stream($temp);
         $stream->seek(4);
         $this->assertEquals(4, $stream->tell());
-        $this->setExpectedException('RuntimeException');
+        $this->setExpectedException(\RuntimeException::class);
         $stream->seek(-4);
     }
 
@@ -172,7 +174,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
     {
         $stream = new Stream();
         $stream->close();
-        $this->setExpectedException('RuntimeException');
+        $this->setExpectedException(\RuntimeException::class);
         $stream->tell();
     }
 
@@ -187,7 +189,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
     public function testWriteFailure()
     {
         $stream = new Stream('php://memory', 'r');
-        $this->setExpectedException('RuntimeException');
+        $this->setExpectedException(\RuntimeException::class);
         $stream->write('Something');
     }
 

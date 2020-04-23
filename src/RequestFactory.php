@@ -11,7 +11,8 @@
 
 namespace Sandesh;
 
-use Interop\Http\Factory\RequestFactoryInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * Class RequestFactory
@@ -22,7 +23,7 @@ class RequestFactory implements RequestFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createRequest($method, $uri)
+    public function createRequest(string $method, $uri): RequestInterface
     {
         if (is_string($uri)) {
             $factory = new UriFactory();

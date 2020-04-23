@@ -54,7 +54,7 @@ class ResponseSenderTest extends \PHPUnit_Framework_TestCase
         $response = new Response();
         $response = $response->withStatus(404, 'Not Found')
             ->withHeader('content-type', 'text/plain')
-            ->withHeader('X-Powered-By', 'PHP/7.1');
+            ->withHeader('X-Powered-By', 'PHP/7.0');
         $response->getBody()->write('This URL does not exist.');
         $this->response = $response;
     }
@@ -64,7 +64,7 @@ class ResponseSenderTest extends \PHPUnit_Framework_TestCase
         global $_GLOBALS;
         $_GLOBALS['dno'] = true;
         $sender = new ResponseSender();
-        $this->setExpectedException('RuntimeException');
+        $this->setExpectedException(\RuntimeException::class);
         $sender->send($this->response);
         unset($_GLOBALS['dno']);
     }
@@ -77,7 +77,7 @@ class ResponseSenderTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $headers);
         $this->assertEquals('HTTP/1.1 404 Not Found', $headers[0]);
         $this->assertEquals('Content-Type: text/plain', $headers[1]);
-        $this->assertEquals('X-Powered-By: PHP/7.1', $headers[2]);
+        $this->assertEquals('X-Powered-By: PHP/7.0', $headers[2]);
     }
 
     public function testBody()

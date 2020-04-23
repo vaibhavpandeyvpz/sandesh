@@ -33,12 +33,14 @@ class Response extends MessageAbstract implements ResponseInterface
     /**
      * Response constructor.
      * @param int $code
+     * @param string $reasonPhrase
      * @param string $body
      */
-    public function __construct($code = 200, $body = 'php://memory')
+    public function __construct($code = 200, $reasonPhrase = '', $body = 'php://memory')
     {
         MessageValidations::assertStatusCode($code);
         $this->statusCode = $code;
+        $this->reasonPhrase = $reasonPhrase;
         if ($body instanceof StreamInterface) {
             $this->body = $body;
         } elseif (is_resource($body) || is_string($body)) {
