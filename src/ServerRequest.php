@@ -24,12 +24,12 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @var array
      */
-    protected $attributes = array();
+    protected $attributes = [];
 
     /**
      * @var array
      */
-    protected $cookieParams = array();
+    protected $cookieParams = [];
 
     /**
      * @var mixed
@@ -39,17 +39,17 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @var array
      */
-    protected $queryParams = array();
+    protected $queryParams = [];
 
     /**
      * @var array
      */
-    protected $serverParams = array();
+    protected $serverParams = [];
 
     /**
      * @var UploadedFileInterface[]
      */
-    protected $uploadedFiles = array();
+    protected $uploadedFiles = [];
 
     /**
      * Request constructor.

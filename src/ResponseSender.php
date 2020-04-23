@@ -25,7 +25,7 @@ class ResponseSender implements ResponseSenderInterface
     public function send(ResponseInterface $response, $obl = null)
     {
         if (headers_sent()) {
-            throw new \RuntimeException('Not sending response as headers already sent');
+            throw new \RuntimeException('Not sending response as headers already sent.');
         }
         if (is_null($obl)) {
             $obl = ob_get_level();

@@ -50,8 +50,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     protected static function getHeaders(array $server)
     {
-        $headers = array();
-        static $pick = array('CONTENT_', 'HTTP_');
+        $headers = [];
+        static $pick = ['CONTENT_', 'HTTP_'];
         foreach ($server as $key => $value) {
             if (!$value) {
                 continue;

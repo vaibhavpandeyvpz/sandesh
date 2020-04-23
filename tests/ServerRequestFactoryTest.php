@@ -36,7 +36,7 @@ class ServerRequestFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreateServerRequestWithServerParams()
     {
         $factory = new ServerRequestFactory();
-        $request = $factory->createServerRequest('POST', 'http://domain.tld:9090/subdir?test=true#phpunit', array(
+        $request = $factory->createServerRequest('POST', 'http://domain.tld:9090/subdir?test=true#phpunit', [
             'CONTENT_LENGTH' => '128',
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
             'HTTP_HOST' => 'domain.tld:9090',
@@ -48,7 +48,7 @@ class ServerRequestFactoryTest extends \PHPUnit_Framework_TestCase
             'REQUEST_URI' => 'http://domain.tld:9090/subdir#phpunit',
             'SERVER_PORT' => '9090',
             'SERVER_PROTOCOL' => 'HTTP/1.0',
-        ));
+        ]);
         $this->assertInstanceOf(ServerRequestInterface::class, $request);
         $this->assertEquals('1.0', $request->getProtocolVersion());
         $this->assertInstanceOf(UriInterface::class, $request->getUri());

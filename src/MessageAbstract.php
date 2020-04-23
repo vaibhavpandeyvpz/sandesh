@@ -28,12 +28,12 @@ abstract class MessageAbstract implements MessageInterface
     /**
      * @var array
      */
-    protected $headerNames = array();
+    protected $headerNames = [];
 
     /**
      * @var array
      */
-    protected $headers = array();
+    protected $headers = [];
 
     /**
      * @var string
@@ -57,7 +57,7 @@ abstract class MessageAbstract implements MessageInterface
             $name = $this->headerNames[strtolower($name)];
             return $this->headers[$name];
         }
-        return array();
+        return [];
     }
 
     /**
@@ -104,8 +104,8 @@ abstract class MessageAbstract implements MessageInterface
         MessageValidations::assertHeaderName($name);
         if ($this->hasHeader($name)) {
             $name = $this->headerNames[strtolower($name)];
-            $value = is_array($value) ? $value : array($value);
-            array_walk($value, array(__NAMESPACE__ . '\\MessageValidations', 'assertHeaderValue'));
+            $value = is_array($value) ? $value : [$value];
+            array_walk($value, [__NAMESPACE__ . '\\MessageValidations', 'assertHeaderValue']);
             $clone = clone $this;
             $clone->headers[$name] += array_merge($clone->headers[$name], $value);
             return $clone;
@@ -130,8 +130,8 @@ abstract class MessageAbstract implements MessageInterface
     public function withHeader($name, $value)
     {
         MessageValidations::assertHeaderName($name);
-        $value = is_array($value) ? $value : array($value);
-        array_walk($value, array(__NAMESPACE__ . '\\MessageValidations', 'assertHeaderValue'));
+        $value = is_array($value) ? $value : [$value];
+        array_walk($value, [__NAMESPACE__ . '\\MessageValidations', 'assertHeaderValue']);
         $clone = clone $this;
         $clone->headerNames[strtolower($name)] = $name;
         $clone->headers[$name] = $value;

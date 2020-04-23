@@ -72,7 +72,7 @@ class MessageValidations
      */
     public static function assertMethod($value)
     {
-        if (!in_array($value, array('CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE'))) {
+        if (!in_array($value, ['CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE'])) {
             throw new \InvalidArgumentException("'{$value}' is not a valid HTTP method");
         }
     }
@@ -208,7 +208,7 @@ class MessageValidations
     {
         return preg_replace_callback(
             '#(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/\?]+|%(?![A-Fa-f0-9]{2}))#u',
-            array(__CLASS__, 'rawUrlEncodeSubject'),
+            [__CLASS__, 'rawUrlEncodeSubject'],
             $string
         );
     }
@@ -221,7 +221,7 @@ class MessageValidations
     {
         $path = preg_replace_callback(
             '#(?:[^' . self::CHAR_UNRESERVED . ':@&=\+\$,\/;%]+|%(?![A-Fa-f0-9]{2}))#u',
-            array(__CLASS__, 'rawUrlEncodeSubject'),
+            [__CLASS__, 'rawUrlEncodeSubject'],
             $path
         );
         if ($path && ('/' === $path[0])) {

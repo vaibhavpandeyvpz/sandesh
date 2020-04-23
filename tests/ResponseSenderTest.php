@@ -35,7 +35,7 @@ function header($value = null)
         return $values;
     }
     if (is_null($values)) {
-        $values = array();
+        $values = [];
     }
     $values[] = $value;
     return false;

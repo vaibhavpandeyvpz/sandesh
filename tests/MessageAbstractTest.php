@@ -51,17 +51,17 @@ class MessageAbstractTest extends \PHPUnit_Framework_TestCase
                 ->hasHeader('Content-Type')
         );
         $this->assertEquals(
-            array('text/plain'),
+            ['text/plain'],
             $message->withHeader('Content-Type', 'text/plain')
                 ->getHeader('Content-Type')
         );
         $this->assertEquals(
-            array('text/plain'),
+            ['text/plain'],
             $message->withAddedHeader('Content-Type', 'text/plain')
                 ->getHeader('Content-Type')
         );
         $this->assertEquals(
-            array('text/plain', 'text/html'),
+            ['text/plain', 'text/html'],
             $message->withHeader('Content-Type', 'text/plain')
                 ->withAddedHeader('Content-Type', 'text/html')
                 ->getHeader('Content-Type')

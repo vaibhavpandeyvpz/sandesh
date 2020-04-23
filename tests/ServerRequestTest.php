@@ -34,10 +34,10 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
                 ->getAttribute('something')
         );
         $this->assertEquals(
-            array(
+            [
                 'something' => false,
                 'anything' => 121,
-            ),
+            ],
             $request->withAttribute('something', false)
                 ->withAttribute('anything', 121)
                 ->getAttributes()
@@ -54,10 +54,10 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
         $request = new ServerRequest();
         $this->assertEmpty($request->getCookieParams());
         $this->assertEquals(
-            $cookies = array(
+            $cookies = [
                 'username' => 'vpz',
                 'guid' => 'something-random-1234',
-            ),
+            ],
             $request->withCookieParams($cookies)
                 ->getCookieParams()
         );
@@ -79,7 +79,7 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
         $request = new ServerRequest();
         $this->assertNull($request->getParsedBody());
         $this->assertEquals(
-            $parsedBody = array('username' => 'vpz'),
+            $parsedBody = ['username' => 'vpz'],
             $request->withParsedBody($parsedBody)
                 ->getParsedBody()
         );
@@ -93,12 +93,12 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
         $request = $request->withBody($body)
             ->withHeader('Content-Type', 'application/json; charset=utf-8');
         $this->assertEquals(
-            array('username' => 'vpz'),
+            ['username' => 'vpz'],
             $request->getParsedBody()
         );
         $body->close();
         $this->assertEquals(
-            array('username' => 'vpz'),
+            ['username' => 'vpz'],
             $request->getParsedBody()
         );
     }
@@ -111,18 +111,18 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
         $request = $request->withBody($body)
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
         $this->assertEquals(
-            array(
+            [
                 'username' => 'vpz',
                 'id' => '121'
-            ),
+            ],
             $request->getParsedBody()
         );
         $body->close();
         $this->assertEquals(
-            array(
+            [
                 'username' => 'vpz',
                 'id' => '121'
-            ),
+            ],
             $request->getParsedBody()
         );
     }
@@ -166,7 +166,7 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
         $request = new ServerRequest();
         $this->assertEmpty($request->getCookieParams());
         $this->assertEquals(
-            $query = array('test' => 'true'),
+            $query = ['test' => 'true'],
             $request->withQueryParams($query)
                 ->getQueryParams()
         );
@@ -175,10 +175,10 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
     public function testServerParams()
     {
         $request = new ServerRequest();
-        $request = $request->withServerParams($server = array(
+        $request = $request->withServerParams($server = [
             'CONTENT_TYPE' => 'text/plain',
             'X_POWERED_BY' => 'PHP/7.1',
-        ));
+        ]);
         $this->assertNotEmpty($request->getServerParams());
         $this->assertEquals($server, $request->getServerParams());
     }
@@ -187,9 +187,9 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
     {
         $request = new ServerRequest();
         $this->assertEmpty($request->getUploadedFiles());
-        $files = array(
+        $files = [
             new UploadedFile('php://memory', 128, UPLOAD_ERR_OK, 'something.txt', 'text/plain')
-        );
+        ];
         $this->assertNotEmpty(
             $request->withUploadedFiles($files)
                 ->getUploadedFiles()
@@ -200,6 +200,6 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
                 ->getUploadedFiles()
         );
         $this->setExpectedException(\UnexpectedValueException::class);
-        $request->withUploadedFiles(array('something.txt'));
+        $request->withUploadedFiles(['something.txt']);
     }
 }
