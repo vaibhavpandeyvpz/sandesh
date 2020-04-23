@@ -7,7 +7,7 @@
 [![Code Coverage](https://img.shields.io/codecov/c/github/vaibhavpandeyvpz/sandesh.svg?style=flat-square)](https://codecov.io/gh/vaibhavpandeyvpz/sandesh)
 [![Latest Version](https://img.shields.io/github/release/vaibhavpandeyvpz/sandesh.svg?style=flat-square)](https://github.com/vaibhavpandeyvpz/sandesh/releases)
 [![Downloads](https://img.shields.io/packagist/dt/vaibhavpandeyvpz/sandesh.svg?style=flat-square)](https://packagist.org/packages/vaibhavpandeyvpz/sandesh)
-[![PHP Version](http://img.shields.io/badge/php-5.3+-8892be.svg?style=flat-square)](https://packagist.org/packages/vaibhavpandeyvpz/sandesh)
+[![PHP Version](http://img.shields.io/badge/php-7.0+-8892be.svg?style=flat-square)](https://packagist.org/packages/vaibhavpandeyvpz/sandesh)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/56d0d01c-b1c2-4d5d-80b3-cc9c576f049e/small.png)](https://insight.sensiolabs.com/projects/56d0d01c-b1c2-4d5d-80b3-cc9c576f049e)
