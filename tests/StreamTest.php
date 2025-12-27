@@ -101,6 +101,8 @@ class StreamTest extends TestCase
         $tempnam = tempnam(sys_get_temp_dir(), 'rndm');
         $stream = new Stream($tempnam, 'w');
         $this->assertFalse($stream->isReadable());
+        $stream->close();
+        unlink($tempnam);
     }
 
     public function test_writable(): void
@@ -150,6 +152,8 @@ class StreamTest extends TestCase
         $stream = new Stream($temp);
         $stream->seek(4);
         $this->assertEquals(4, $stream->tell());
+        $stream->close();
+        unlink($temp);
         $this->expectException(\RuntimeException::class);
         $stream->seek(-4);
     }

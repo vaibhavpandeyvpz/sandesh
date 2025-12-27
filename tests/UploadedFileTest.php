@@ -57,10 +57,20 @@ class UploadedFileTest extends TestCase
         $file = fopen($source, 'w');
         fwrite($file, 'Something');
         fclose($file);
+        $target = tempnam(sys_get_temp_dir(), 'sandesh');
         $file = new UploadedFile($source, filesize($source), UPLOAD_ERR_OK, 'something.txt', 'text/plain');
-        $file->moveTo(tempnam(sys_get_temp_dir(), 'sandesh'));
-        $this->expectException(\RuntimeException::class);
-        $file->moveTo(tempnam(sys_get_temp_dir(), 'sandesh'));
+        $file->moveTo($target);
+        // Source file is moved, so it no longer exists
+        $this->assertFileExists($target);
+        try {
+            $this->expectException(\RuntimeException::class);
+            $file->moveTo(tempnam(sys_get_temp_dir(), 'sandesh'));
+        } finally {
+            // Clean up target file
+            if (file_exists($target)) {
+                unlink($target);
+            }
+        }
     }
 
     public function test_move_with_stream(): void
