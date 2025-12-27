@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/sandesh package.
  *
@@ -11,65 +13,93 @@
 
 namespace Sandesh;
 
-use Interop\Http\Factory\StreamFactoryInterface;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
  * Class StreamFactoryTest
- * @package Sandesh
  */
-class StreamFactoryTest extends \PHPUnit_Framework_TestCase
+class StreamFactoryTest extends TestCase
 {
-    /**
-     * @var StreamFactoryInterface
-     */
-    protected $factory;
+    protected StreamFactoryInterface $factory;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->factory = new StreamFactory();
+        $this->factory = new StreamFactory;
     }
 
-    public function testStream()
+    public function test_stream(): void
     {
-        $this->assertInstanceOf(
-            StreamInterface::class,
-            $stream = $this->factory->createStream()
-        );
+        $stream = $this->factory->createStream();
+        $this->assertInstanceOf(StreamInterface::class, $stream);
         $this->assertEmpty($stream->getContents());
-        $stream->write($text = 'Hello');
-        $this->assertEquals($text, (string)$stream);
+        $text = 'Hello';
+        $stream->write($text);
+        $this->assertEquals($text, (string) $stream);
     }
 
-    public function testStreamFromString()
+    public function test_stream_from_string(): void
     {
-        $this->assertInstanceOf(
-            StreamInterface::class,
-            $stream = $this->factory->createStream($text = 'Hello')
-        );
-        $this->assertEquals($text, (string)$stream);
+        $text = 'Hello';
+        $stream = $this->factory->createStream($text);
+        $this->assertInstanceOf(StreamInterface::class, $stream);
+        $this->assertEquals($text, (string) $stream);
     }
 
-    public function testStreamFromFile()
+    public function test_stream_from_file(): void
     {
-        $this->assertInstanceOf(
-            StreamInterface::class,
-            $stream = $this->factory->createStreamFromFile(__FILE__, 'r')
-        );
-        $this->assertNotEmpty($text = $stream->read(5));
+        $stream = $this->factory->createStreamFromFile(__FILE__, 'r');
+        $this->assertInstanceOf(StreamInterface::class, $stream);
+        $text = $stream->read(5);
+        $this->assertNotEmpty($text);
         $this->assertEquals('<?php', $text);
         $stream->close();
     }
 
-    public function testStreamFromResource()
+    public function test_stream_from_resource(): void
     {
         $handle = fopen(__FILE__, 'r');
-        $this->assertInstanceOf(
-            StreamInterface::class,
-            $stream = $this->factory->createStreamFromResource($handle)
-        );
-        $this->assertNotEmpty($text = $stream->read(5));
+        $stream = $this->factory->createStreamFromResource($handle);
+        $this->assertInstanceOf(StreamInterface::class, $stream);
+        $text = $stream->read(5);
+        $this->assertNotEmpty($text);
         $this->assertEquals('<?php', $text);
         $stream->close();
+    }
+
+    public function test_stream_with_empty_string(): void
+    {
+        $stream = $this->factory->createStream('');
+        $this->assertInstanceOf(StreamInterface::class, $stream);
+        $this->assertEmpty((string) $stream);
+    }
+
+    public function test_stream_from_file_with_write_mode(): void
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'sandesh');
+        $stream = $this->factory->createStreamFromFile($tempFile, 'w');
+        $stream->write('Test content');
+        $stream->close();
+        $this->assertEquals('Test content', file_get_contents($tempFile));
+        unlink($tempFile);
+    }
+
+    public function test_stream_from_file_with_append_mode(): void
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'sandesh');
+        file_put_contents($tempFile, 'Original');
+        $stream = $this->factory->createStreamFromFile($tempFile, 'a');
+        $stream->write(' Appended');
+        $stream->close();
+        $this->assertStringContainsString('Original', file_get_contents($tempFile));
+        $this->assertStringContainsString('Appended', file_get_contents($tempFile));
+        unlink($tempFile);
+    }
+
+    public function test_stream_from_non_existent_file(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->factory->createStreamFromFile('/non/existent/file.txt', 'r');
     }
 }

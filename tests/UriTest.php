@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/sandesh package.
  *
@@ -11,15 +13,16 @@
 
 namespace Sandesh;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class UriTest
- * @package Sandesh
  */
-class UriTest extends \PHPUnit_Framework_TestCase
+class UriTest extends TestCase
 {
-    public function testAuthority()
+    public function test_authority(): void
     {
-        $uri = new Uri();
+        $uri = new Uri;
         $this->assertEmpty($uri->getAuthority());
         $this->assertEquals(
             'domain.tld',
@@ -48,9 +51,9 @@ class UriTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFragment()
+    public function test_fragment(): void
     {
-        $uri = new Uri();
+        $uri = new Uri;
         $this->assertEmpty($uri->getFragment());
         $this->assertEquals(
             'phpunit',
@@ -69,9 +72,9 @@ class UriTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testHost()
+    public function test_host(): void
     {
-        $uri = new Uri();
+        $uri = new Uri;
         $this->assertEmpty($uri->getHost());
         $this->assertEquals(
             'domain.tld',
@@ -95,9 +98,9 @@ class UriTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testPath()
+    public function test_path(): void
     {
-        $uri = new Uri();
+        $uri = new Uri;
         $this->assertEmpty($uri->getPath());
         $this->assertEquals(
             '/subdir',
@@ -116,25 +119,25 @@ class UriTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testPathWithQuery()
+    public function test_path_with_query(): void
     {
-        $uri = new Uri();
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $uri = new Uri;
+        $this->expectException(\InvalidArgumentException::class);
         $uri->withPath('/subdir?test=true')
             ->getPath();
     }
 
-    public function testPathWithFragment()
+    public function test_path_with_fragment(): void
     {
-        $uri = new Uri();
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $uri = new Uri;
+        $this->expectException(\InvalidArgumentException::class);
         $uri->withPath('/subdir#phpunit')
             ->getPath();
     }
 
-    public function testPort()
+    public function test_port(): void
     {
-        $uri = new Uri();
+        $uri = new Uri;
         $this->assertNull($uri->getPort());
         $this->assertEquals(
             9090,
@@ -143,16 +146,16 @@ class UriTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testPortInvalid()
+    public function test_port_invalid(): void
     {
-        $uri = new Uri();
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $uri = new Uri;
+        $this->expectException(\InvalidArgumentException::class);
         $uri->withPort(-999);
     }
 
-    public function testQuery()
+    public function test_query(): void
     {
-        $uri = new Uri();
+        $uri = new Uri;
         $this->assertEmpty($uri->getQuery());
         $this->assertEquals(
             'test=true',
@@ -171,16 +174,16 @@ class UriTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testQueryInvalid()
+    public function test_query_invalid(): void
     {
-        $uri = new Uri();
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $uri = new Uri;
+        $this->expectException(\InvalidArgumentException::class);
         $uri->withQuery('test=true#phpunit');
     }
 
-    public function testScheme()
+    public function test_scheme(): void
     {
-        $uri = new Uri();
+        $uri = new Uri;
         $this->assertEmpty($uri->getScheme());
         $this->assertEquals(
             'http',
@@ -199,9 +202,9 @@ class UriTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testUserInfo()
+    public function test_user_info(): void
     {
-        $uri = new Uri();
+        $uri = new Uri;
         $this->assertEmpty($uri->getUserInfo());
         $this->assertEquals(
             'someone',
@@ -214,14 +217,14 @@ class UriTest extends \PHPUnit_Framework_TestCase
                 ->getUserInfo()
         );
         $this->assertEmpty(
-            $uri->withUserInfo(null, 'secret')
-                ->getScheme()
+            $uri->withUserInfo('', 'secret')
+                ->getUserInfo()
         );
     }
 
-    public function testImmutability()
+    public function test_immutability(): void
     {
-        $uri = new Uri();
+        $uri = new Uri;
         $this->assertNotSame($uri, $uri->withFragment('phpunit'));
         $this->assertNotSame($uri, $uri->withHost('domain.tld'));
         $this->assertNotSame($uri, $uri->withPath('/subdir'));
@@ -231,9 +234,9 @@ class UriTest extends \PHPUnit_Framework_TestCase
         $this->assertNotSame($uri, $uri->withUserInfo('someone', 'secret'));
     }
 
-    public function testToString()
+    public function test_to_string(): void
     {
-        $uri = new Uri();
+        $uri = new Uri;
         $uri = $uri->withFragment('phpunit')
             ->withHost('domain.tld')
             ->withPath('/subdir')
@@ -241,6 +244,88 @@ class UriTest extends \PHPUnit_Framework_TestCase
             ->withQuery('test=true')
             ->withScheme('http')
             ->withUserInfo('someone', 'secret');
-        $this->assertEquals('http://someone:secret@domain.tld:9090/subdir?test=true#phpunit', (string)$uri);
+        $this->assertEquals('http://someone:secret@domain.tld:9090/subdir?test=true#phpunit', (string) $uri);
+    }
+
+    public function test_port_boundary_values(): void
+    {
+        $uri = new Uri;
+        // Test minimum valid port
+        $this->assertEquals(0, $uri->withPort(0)->getPort());
+        // Test maximum valid port
+        $this->assertEquals(65534, $uri->withPort(65534)->getPort());
+        // Test invalid port
+        $this->expectException(\InvalidArgumentException::class);
+        $uri->withPort(65535);
+        $this->expectException(\InvalidArgumentException::class);
+        $uri->withPort(-1);
+    }
+
+    public function test_port_with_null(): void
+    {
+        $uri = new Uri;
+        $uri = $uri->withPort(8080);
+        $this->assertEquals(8080, $uri->getPort());
+        $uri = $uri->withPort(null);
+        $this->assertNull($uri->getPort());
+    }
+
+    public function test_authority_with_user_only(): void
+    {
+        $uri = new Uri;
+        $uri = $uri->withHost('domain.tld')
+            ->withUserInfo('user');
+        $this->assertEquals('user@domain.tld', $uri->getAuthority());
+    }
+
+    public function test_authority_with_empty_host(): void
+    {
+        $uri = new Uri;
+        $uri = $uri->withUserInfo('user', 'pass')
+            ->withPort(8080);
+        $this->assertEquals('', $uri->getAuthority());
+    }
+
+    public function test_to_string_with_minimal_components(): void
+    {
+        $uri = new Uri;
+        $uri = $uri->withScheme('http')
+            ->withHost('domain.tld');
+        $this->assertEquals('http://domain.tld', (string) $uri);
+    }
+
+    public function test_to_string_with_path_only(): void
+    {
+        $uri = new Uri;
+        $uri = $uri->withPath('/test');
+        $this->assertEquals('/test', (string) $uri);
+    }
+
+    public function test_to_string_with_query_only(): void
+    {
+        $uri = new Uri;
+        $uri = $uri->withQuery('test=true');
+        $this->assertEquals('?test=true', (string) $uri);
+    }
+
+    public function test_to_string_with_fragment_only(): void
+    {
+        $uri = new Uri;
+        $uri = $uri->withFragment('test');
+        $this->assertEquals('#test', (string) $uri);
+    }
+
+    public function test_user_info_with_empty_password(): void
+    {
+        $uri = new Uri;
+        $uri = $uri->withUserInfo('user', '');
+        $this->assertEquals('user:', $uri->getUserInfo());
+    }
+
+    public function test_user_info_with_null_password(): void
+    {
+        $uri = new Uri;
+        $uri = $uri->withUserInfo('user', null);
+        $this->assertEquals('user', $uri->getUserInfo());
     }
 }

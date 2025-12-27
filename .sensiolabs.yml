@@ -1,3 +1,0 @@
-rules:
-    php.unused_local_variable_or_private_member:
-        enabled: false

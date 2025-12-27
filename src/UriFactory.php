@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/sandesh package.
  *
@@ -15,22 +17,30 @@ use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Class UriFactory
- * @package Sandesh
+ * URI factory implementation.
+ *
+ * Creates Uri instances as defined in PSR-17.
+ * This factory can create URIs from URI strings, parsing all components
+ * (scheme, host, port, path, query, fragment, user info).
  */
 class UriFactory implements UriFactoryInterface
 {
     /**
      * {@inheritdoc}
+     *
+     * @param  string  $uri  URI string to parse
+     * @return UriInterface A new Uri instance
+     *
+     * @throws \InvalidArgumentException If the URI string is malformed
      */
     public function createUri(string $uri = ''): UriInterface
     {
-        $obj = new Uri();
-        if (empty($uri)) {
+        $obj = new Uri;
+        if ($uri === '') {
             return $obj;
         }
         $url = parse_url($uri);
-        if (!$url) {
+        if ($url === false) {
             throw new \InvalidArgumentException('URL passed is not a well-formed URI');
         }
         if (isset($url['fragment'])) {
@@ -52,9 +62,10 @@ class UriFactory implements UriFactoryInterface
             $obj = $obj->withScheme($url['scheme']);
         }
         if (isset($url['user'])) {
-            $password = isset($url['pass']) ? $url['pass'] : null;
+            $password = $url['pass'] ?? null;
             $obj = $obj->withUserInfo($url['user'], $password);
         }
+
         return $obj;
     }
 }

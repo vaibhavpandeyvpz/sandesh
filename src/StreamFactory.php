@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/sandesh package.
  *
@@ -15,25 +17,37 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * Class StreamFactory
- * @package Sandesh
+ * Stream factory implementation.
+ *
+ * Creates Stream instances as defined in PSR-17.
+ * This factory can create streams from strings, file paths, or resources.
  */
 class StreamFactory implements StreamFactoryInterface
 {
     /**
      * {@inheritdoc}
+     *
+     * @param  string  $content  Initial content for the stream
+     * @return StreamInterface A new Stream instance
      */
     public function createStream(string $content = ''): StreamInterface
     {
-        $stream = new Stream();
-        if ($content) {
+        $stream = new Stream;
+        if ($content !== '') {
             $stream->write($content);
         }
+
         return $stream;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param  string  $filename  Path to the file
+     * @param  string  $mode  File mode (default: 'r')
+     * @return StreamInterface A new Stream instance
+     *
+     * @throws \RuntimeException If the file cannot be opened
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
@@ -42,6 +56,9 @@ class StreamFactory implements StreamFactoryInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param  resource  $resource  The resource to wrap
+     * @return StreamInterface A new Stream instance
      */
     public function createStreamFromResource($resource): StreamInterface
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/sandesh package.
  *
@@ -11,33 +13,33 @@
 
 namespace Sandesh;
 
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
  * Class MessageAbstractTest
- * @package Sandesh
  */
-class MessageAbstractTest extends \PHPUnit_Framework_TestCase
+class MessageAbstractTest extends TestCase
 {
-    public function testBody()
+    public function test_body(): void
     {
         /** @var MessageInterface $message */
         $message = $this->getMockForAbstractClass(MessageAbstract::class);
-        $this->assertNull($message->getBody());
-        $body = $this->getMockBuilder(StreamInterface::class)->getMock();
+        $this->assertInstanceOf(StreamInterface::class, $message->getBody());
+        $body = $this->createMock(StreamInterface::class);
         $this->assertSame($body, $message->withBody($body)->getBody());
     }
 
-    public function testHeaders()
+    public function test_headers(): void
     {
         /** @var MessageInterface $message */
         $message = $this->getMockForAbstractClass(MessageAbstract::class);
         $message = $message->withHeader('Content-Length', '128');
-        $this->assertInternalType('array', $message->getHeaders());
+        $this->assertIsArray($message->getHeaders());
         $this->assertCount(1, $message->getHeaders());
         $this->assertTrue($message->hasHeader('Content-Length'));
-        $this->assertInternalType('array', $message->getHeader('Content-Length'));
+        $this->assertIsArray($message->getHeader('Content-Length'));
         $this->assertEquals('128', $message->getHeaderLine('Content-Length'));
         $this->assertFalse($message->hasHeader('Content-Type'));
         $this->assertEmpty($message->getHeaderLine('Content-Type'));
@@ -74,12 +76,14 @@ class MessageAbstractTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testHeadersCaseInsensitive()
+    public function test_headers_case_insensitive(): void
     {
         /** @var MessageInterface $message */
         $message = $this->getMockForAbstractClass(MessageAbstract::class);
-        $message = $message->withHeader('Content-Length', $length = '128')
-            ->withHeader('Content-Type', $type = 'text/html; charset=utf-8');
+        $length = '128';
+        $type = 'text/html; charset=utf-8';
+        $message = $message->withHeader('Content-Length', $length)
+            ->withHeader('Content-Type', $type);
         $this->assertTrue($message->hasHeader('Content-Length'));
         $this->assertTrue($message->hasHeader('content-length'));
         $this->assertEquals($length, $message->getHeaderLine('Content-Length'));
@@ -106,23 +110,23 @@ class MessageAbstractTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testHeaderInvalidName()
+    public function test_header_invalid_name(): void
     {
         /** @var MessageInterface $message */
         $message = $this->getMockForAbstractClass(MessageAbstract::class);
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $message->withHeader('Some-Invalid<Name', 'Value');
     }
 
-    public function testHeaderInvalidValue()
+    public function test_header_invalid_value(): void
     {
         /** @var MessageInterface $message */
         $message = $this->getMockForAbstractClass(MessageAbstract::class);
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $message->withHeader('Some-Header', "Value\r\n");
     }
 
-    public function testProtocolVersion()
+    public function test_protocol_version(): void
     {
         /** @var MessageInterface $message */
         $message = $this->getMockForAbstractClass(MessageAbstract::class);
@@ -138,7 +142,77 @@ class MessageAbstractTest extends \PHPUnit_Framework_TestCase
             $message->withProtocolVersion('1.1')
                 ->getProtocolVersion()
         );
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $message->withProtocolVersion('10.0');
+    }
+
+    public function test_header_with_array_value(): void
+    {
+        /** @var MessageInterface $message */
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
+        $message = $message->withHeader('Accept', ['text/html', 'application/json']);
+        $this->assertEquals(['text/html', 'application/json'], $message->getHeader('Accept'));
+        $this->assertEquals('text/html,application/json', $message->getHeaderLine('Accept'));
+    }
+
+    public function test_with_added_header_when_header_does_not_exist(): void
+    {
+        /** @var MessageInterface $message */
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
+        $message = $message->withAddedHeader('X-Custom', 'value1');
+        $this->assertEquals(['value1'], $message->getHeader('X-Custom'));
+        $message = $message->withAddedHeader('X-Custom', 'value2');
+        $this->assertEquals(['value1', 'value2'], $message->getHeader('X-Custom'));
+    }
+
+    public function test_multiple_header_values(): void
+    {
+        /** @var MessageInterface $message */
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
+        $message = $message->withHeader('Accept', 'text/html')
+            ->withAddedHeader('Accept', 'application/json')
+            ->withAddedHeader('Accept', 'text/plain');
+        $this->assertEquals(['text/html', 'application/json', 'text/plain'], $message->getHeader('Accept'));
+        $this->assertEquals('text/html,application/json,text/plain', $message->getHeaderLine('Accept'));
+    }
+
+    public function test_empty_header_value(): void
+    {
+        /** @var MessageInterface $message */
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
+        $message = $message->withHeader('X-Empty', '');
+        $this->assertEquals([''], $message->getHeader('X-Empty'));
+        $this->assertEquals('', $message->getHeaderLine('X-Empty'));
+    }
+
+    public function test_protocol_version_edge_cases(): void
+    {
+        /** @var MessageInterface $message */
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
+        $this->assertEquals('2.0', $message->withProtocolVersion('2.0')->getProtocolVersion());
+        $this->expectException(\InvalidArgumentException::class);
+        $message->withProtocolVersion('0.9');
+        $this->expectException(\InvalidArgumentException::class);
+        $message->withProtocolVersion('1.10');
+    }
+
+    public function test_immutability(): void
+    {
+        /** @var MessageInterface $message */
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
+        $original = $message;
+        $this->assertNotSame($original, $message->withHeader('X-Test', 'value'));
+        $this->assertNotSame($original, $message->withBody($this->createMock(StreamInterface::class)));
+        $this->assertNotSame($original, $message->withProtocolVersion('1.0'));
+        $message = $message->withHeader('X-Test', 'value');
+        $this->assertNotSame($message, $message->withoutHeader('X-Test'));
+    }
+
+    public function test_get_header_with_non_existent_header(): void
+    {
+        /** @var MessageInterface $message */
+        $message = $this->getMockForAbstractClass(MessageAbstract::class);
+        $this->assertEquals([], $message->getHeader('Non-Existent'));
+        $this->assertEquals('', $message->getHeaderLine('Non-Existent'));
     }
 }

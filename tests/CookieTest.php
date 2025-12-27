@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/sandesh package.
  *
@@ -11,82 +13,148 @@
 
 namespace Sandesh;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class CookieTest
- * @package Sandesh
  */
-class CookieTest extends \PHPUnit_Framework_TestCase
+class CookieTest extends TestCase
 {
-    public function testDomain()
+    public function test_domain(): void
     {
-        $cookie = new Cookie($name = 'somename');
+        $name = 'somename';
+        $cookie = new Cookie($name);
         $this->assertNull($cookie->getDomain());
-        $cookie = $cookie->withDomain($domain = 'domain.tld');
+        $domain = 'domain.tld';
+        $cookie = $cookie->withDomain($domain);
         $this->assertEquals($domain, $cookie->getDomain());
     }
 
-    public function testHttpOnly()
+    public function test_http_only(): void
     {
         $cookie = new Cookie('somename');
         $this->assertFalse($cookie->isHttpOnly());
         $this->assertTrue($cookie->withHttpOnly(true)->isHttpOnly());
     }
 
-    public function testMaxAge()
+    public function test_max_age(): void
     {
         $cookie = new Cookie('somename');
         $this->assertEquals(0, $cookie->getMaxAge());
-        $cookie = $cookie->withMaxAge($age = 86400);
+        $age = 86400;
+        $cookie = $cookie->withMaxAge($age);
         $this->assertEquals($age, $cookie->getMaxAge());
     }
 
-    public function testName()
+    public function test_name(): void
     {
-        $cookie = new Cookie($name = 'somename');
+        $name = 'somename';
+        $cookie = new Cookie($name);
         $this->assertEquals($name, $cookie->getName());
-        $cookie = $cookie->withName($name = 'othername');
+        $name = 'othername';
+        $cookie = $cookie->withName($name);
         $this->assertEquals($name, $cookie->getName());
     }
 
-    public function testPath()
+    public function test_path(): void
     {
-        $cookie = new Cookie($name = 'somename');
+        $name = 'somename';
+        $cookie = new Cookie($name);
         $this->assertNull($cookie->getPath());
-        $cookie = $cookie->withPath($path = '/');
+        $path = '/';
+        $cookie = $cookie->withPath($path);
         $this->assertEquals($path, $cookie->getPath());
     }
 
-    public function testSecure()
+    public function test_secure(): void
     {
         $cookie = new Cookie('somename');
         $this->assertFalse($cookie->isSecure());
         $this->assertTrue($cookie->withSecure(true)->isSecure());
     }
 
-    public function testValue()
+    public function test_value(): void
     {
         $cookie = new Cookie('somename');
         $this->assertNull($cookie->getValue());
-        $cookie = $cookie->withValue($value = 'somevalue');
+        $value = 'somevalue';
+        $cookie = $cookie->withValue($value);
         $this->assertEquals($value, $cookie->getValue());
         $cookie = $cookie->withValue(null);
         $this->assertNull($cookie->getValue());
     }
 
-    public function testToString()
+    public function test_to_string(): void
     {
-        $time = new \DateTime();
+        $time = new \DateTime;
         $cookie = new Cookie('PHPSESS');
         $expected = sprintf(
             'PHPSESS=1234567890; Domain=domain.tld; Expires=%s; HttpOnly; Max-Age=86400; Path=/admin; Secure',
             $time->format(Cookie::EXPIRY_FORMAT)
         );
-        $this->assertEquals($expected, (string)$cookie->withValue('1234567890')
+        $this->assertEquals($expected, (string) $cookie->withValue('1234567890')
             ->withDomain('domain.tld')
             ->withExpiry($time)
             ->withHttpOnly(true)
             ->withMaxAge(86400)
             ->withPath('/admin')
             ->withSecure(true));
+    }
+
+    public function test_expiry_with_string(): void
+    {
+        $cookie = new Cookie('test');
+        $time = new \DateTime;
+        $timeString = $time->format(Cookie::EXPIRY_FORMAT);
+        $cookie = $cookie->withExpiry($timeString);
+        $expiry = $cookie->getExpiry();
+        if ($expiry !== null) {
+            $this->assertEquals($time->format(Cookie::EXPIRY_FORMAT), $expiry->format(Cookie::EXPIRY_FORMAT));
+        }
+    }
+
+    public function test_expiry_with_int(): void
+    {
+        $cookie = new Cookie('test');
+        $timestamp = time() + 3600;
+        $cookie = $cookie->withExpiry($timestamp);
+        $expiry = $cookie->getExpiry();
+        $this->assertTrue($expiry === null || $expiry instanceof \DateTimeInterface);
+    }
+
+    public function test_expiry_with_null(): void
+    {
+        $cookie = new Cookie('test');
+        $cookie = $cookie->withExpiry(new \DateTime);
+        $this->assertNotNull($cookie->getExpiry());
+        $cookie = $cookie->withExpiry(null);
+        $this->assertNull($cookie->getExpiry());
+    }
+
+    public function test_to_string_with_minimal_cookie(): void
+    {
+        $cookie = new Cookie('test');
+        $cookie = $cookie->withValue('value');
+        $this->assertEquals('test=value', (string) $cookie);
+    }
+
+    public function test_to_string_with_null_value(): void
+    {
+        $cookie = new Cookie('test');
+        $this->assertEquals('test=', (string) $cookie);
+    }
+
+    public function test_immutability(): void
+    {
+        $cookie = new Cookie('test');
+        $original = $cookie;
+        $this->assertNotSame($original, $cookie->withDomain('domain.tld'));
+        $this->assertNotSame($original, $cookie->withExpiry(new \DateTime));
+        $this->assertNotSame($original, $cookie->withHttpOnly(true));
+        $this->assertNotSame($original, $cookie->withMaxAge(3600));
+        $this->assertNotSame($original, $cookie->withName('new'));
+        $this->assertNotSame($original, $cookie->withPath('/'));
+        $this->assertNotSame($original, $cookie->withSecure(true));
+        $this->assertNotSame($original, $cookie->withValue('value'));
     }
 }

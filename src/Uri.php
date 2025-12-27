@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/sandesh package.
  *
@@ -14,233 +16,301 @@ namespace Sandesh;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Class Uri
- * @package Sandesh
+ * URI implementation.
+ *
+ * Represents a URI (Uniform Resource Identifier) as defined in RFC 3986.
+ * This class provides methods to access and modify all components of a URI:
+ * scheme, authority (user info, host, port), path, query, and fragment.
  */
 class Uri implements UriInterface
 {
     /**
-     * @var string
+     * URI fragment (the part after '#').
      */
-    protected $fragment = '';
+    protected string $fragment = '';
 
     /**
-     * @var string
+     * URI host (domain name or IP address).
      */
-    protected $host = '';
+    protected string $host = '';
 
     /**
-     * @var string
+     * URI password component (for user info).
      */
-    protected $password = '';
+    protected ?string $password = null;
 
     /**
-     * @var string
+     * URI path component.
      */
-    protected $path = '';
+    protected string $path = '';
 
     /**
-     * @var int
+     * URI port number.
      */
-    protected $port;
+    protected ?int $port = null;
 
     /**
-     * @var string
+     * URI query string (the part after '?').
      */
-    protected $query = '';
+    protected string $query = '';
 
     /**
-     * @var string
+     * URI scheme (e.g., 'http', 'https').
      */
-    protected $scheme = '';
+    protected string $scheme = '';
 
     /**
-     * @var string
+     * URI user component (for user info).
      */
-    protected $user = '';
+    protected string $user = '';
 
     /**
      * {@inheritdoc}
+     *
+     * @return string The authority component (userinfo@host:port)
      */
-    public function getAuthority()
+    public function getAuthority(): string
     {
+        if ($this->host === '') {
+            return '';
+        }
         $authority = $this->host;
         $info = $this->getUserInfo();
-        if ($info) {
+        if ($info !== '') {
             $authority = "{$info}@{$authority}";
         }
-        if ($this->port) {
-            $authority = "{$authority}:{$this->port}";
+        if ($this->port !== null) {
+            $authority .= ":{$this->port}";
         }
+
         return $authority;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return string The fragment component
      */
-    public function getFragment()
+    public function getFragment(): string
     {
         return $this->fragment;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return string The host component
      */
-    public function getHost()
+    public function getHost(): string
     {
         return $this->host;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return string The path component
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return int|null The port number, or null if no port is specified
      */
-    public function getPort()
+    public function getPort(): ?int
     {
         return $this->port;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return string The query string component
      */
-    public function getQuery()
+    public function getQuery(): string
     {
         return $this->query;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return string The scheme component
      */
-    public function getScheme()
+    public function getScheme(): string
     {
         return $this->scheme;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return string The user info component (user:password)
      */
-    public function getUserInfo()
+    public function getUserInfo(): string
     {
         $info = $this->user;
-        if ($info && $this->password) {
-            $info .= (':' . $this->password);
+        if ($info !== '' && $this->password !== null && $this->password !== '') {
+            $info .= ':'.$this->password;
+        } elseif ($info !== '' && $this->password === '') {
+            // Empty string password should show as user:
+            $info .= ':';
         }
+
         return $info;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param  string  $fragment  The fragment to use with the new instance
+     * @return static A new instance with the specified fragment
      */
-    public function withFragment($fragment)
+    public function withFragment(string $fragment): static
     {
         $fragment = MessageValidations::normalizeFragment($fragment);
         $clone = clone $this;
         $clone->fragment = $fragment;
+
         return $clone;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param  string  $host  The hostname to use with the new instance
+     * @return static A new instance with the specified host
      */
-    public function withHost($host)
+    public function withHost(string $host): static
     {
         $host = strtolower($host);
         $clone = clone $this;
         $clone->host = $host;
+
         return $clone;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param  string  $path  The path to use with the new instance
+     * @return static A new instance with the specified path
+     *
+     * @throws \InvalidArgumentException If the path contains query or fragment
      */
-    public function withPath($path)
+    public function withPath(string $path): static
     {
         MessageValidations::assertPath($path);
         $path = MessageValidations::normalizePath($path);
         $clone = clone $this;
         $clone->path = $path;
+
         return $clone;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param  int|null  $port  The port to use with the new instance
+     * @return static A new instance with the specified port
+     *
+     * @throws \InvalidArgumentException If the port is out of valid range
      */
-    public function withPort($port)
+    public function withPort(?int $port): static
     {
         if ($port !== null) {
-            MessageValidations::assertTcpUdpPort($port = (int)$port);
+            MessageValidations::assertTcpUdpPort($port);
         }
         $clone = clone $this;
         $clone->port = $port;
+
         return $clone;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param  string  $query  The query string to use with the new instance
+     * @return static A new instance with the specified query string
+     *
+     * @throws \InvalidArgumentException If the query contains a fragment
      */
-    public function withQuery($query)
+    public function withQuery(string $query): static
     {
         MessageValidations::assertQuery($query);
         $query = MessageValidations::normalizeQuery($query);
         $clone = clone $this;
         $clone->query = $query;
+
         return $clone;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param  string  $scheme  The scheme to use with the new instance
+     * @return static A new instance with the specified scheme
      */
-    public function withScheme($scheme)
+    public function withScheme(string $scheme): static
     {
         $scheme = MessageValidations::normalizeScheme($scheme);
         $clone = clone $this;
         $clone->scheme = $scheme;
+
         return $clone;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param  string  $user  The user name to use for authority
+     * @param  string|null  $password  The password associated with $user
+     * @return static A new instance with the specified user information
      */
-    public function withUserInfo($user, $password = null)
+    public function withUserInfo(string $user, ?string $password = null): static
     {
         $clone = clone $this;
         $clone->user = $user;
         $clone->password = $password;
+
         return $clone;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * Returns the string representation of the URI.
+     *
+     * @return string The complete URI as a string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $uri = '';
-        if ($this->scheme) {
+        if ($this->scheme !== '') {
             $uri .= "{$this->scheme}://";
         }
         $authority = $this->getAuthority();
-        if ($authority) {
+        if ($authority !== '') {
             $uri .= $authority;
         }
-        if ($path = $this->path) {
-            if ('/' !== $path[0]) {
+        $path = $this->path;
+        if ($path !== '') {
+            if (! str_starts_with($path, '/')) {
                 $path = "/{$path}";
             }
             $uri .= $path;
         }
-        if ($this->query) {
+        if ($this->query !== '') {
             $uri .= "?{$this->query}";
         }
-        if ($this->fragment) {
+        if ($this->fragment !== '') {
             $uri .= "#{$this->fragment}";
         }
+
         return $uri;
     }
 }

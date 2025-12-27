@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/sandesh package.
  *
@@ -12,46 +14,52 @@
 namespace Sandesh;
 
 /**
- * Class CookieFactory
- * @package Sandesh
+ * Cookie factory implementation.
+ *
+ * Creates Cookie instances from Set-Cookie header strings.
+ * Parses cookie attributes including Domain, Path, Expires, Max-Age,
+ * Secure, and HttpOnly flags according to RFC 6265.
  */
 class CookieFactory implements CookieFactoryInterface
 {
     /**
      * {@inheritdoc}
+     *
+     * @param  string  $header  Set-Cookie header string
+     * @return CookieInterface A new Cookie instance
+     *
+     * @throws \InvalidArgumentException If the header format is invalid
      */
-    public function createCookie($header)
+    public function createCookie(string $header): CookieInterface
     {
         $parts = preg_split('~\\s*[;]\\s*~', $header);
-        list($name, $value) = explode('=', array_shift($parts), 2);
+        if ($parts === false || $parts === []) {
+            throw new \InvalidArgumentException('Invalid cookie header format');
+        }
+        $firstPart = array_shift($parts);
+        if ($firstPart === null) {
+            throw new \InvalidArgumentException('Invalid cookie header format');
+        }
+        [$name, $value] = explode('=', $firstPart, 2) + ['', ''];
         $cookie = new Cookie($name);
-        if (is_string($value)) {
+        if ($value !== '') {
             $cookie = $cookie->withValue(urldecode($value));
         }
-        while ($nvp = array_shift($parts)) {
-            $nvp = explode('=', $nvp, 2);
-            $value = count($nvp) === 2 ? $nvp[1] : null;
-            switch (strtolower($nvp[0])) {
-                case 'domain':
-                    $cookie = $cookie->withDomain($value);
-                    break;
-                case 'expires':
-                    $cookie = $cookie->withExpiry($value);
-                    break;
-                case 'httponly':
-                    $cookie = $cookie->withHttpOnly(true);
-                    break;
-                case 'max-age':
-                    $cookie = $cookie->withMaxAge($value);
-                    break;
-                case 'path':
-                    $cookie = $cookie->withPath($value);
-                    break;
-                case 'secure':
-                    $cookie = $cookie->withSecure(true);
-                    break;
-            }
+        foreach ($parts as $nvp) {
+            $nvpParts = explode('=', $nvp, 2);
+            $paramName = strtolower($nvpParts[0]);
+            $paramValue = $nvpParts[1] ?? null;
+            $cookie = match ($paramName) {
+                'domain' => $cookie->withDomain($paramValue),
+                'expires' => $cookie->withExpiry($paramValue),
+                'httponly' => $cookie->withHttpOnly(true),
+                'max-age' => $cookie->withMaxAge((int) ($paramValue ?? 0)),
+                'path' => $cookie->withPath($paramValue),
+                'secure' => $cookie->withSecure(true),
+                default => $cookie,
+            };
         }
+
         return $cookie;
     }
 }

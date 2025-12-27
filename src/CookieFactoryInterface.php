@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/sandesh package.
  *
@@ -12,14 +14,20 @@
 namespace Sandesh;
 
 /**
- * Interface CookieFactoryInterface
- * @package Sandesh
+ * Interface for creating Cookie instances from Set-Cookie headers.
+ *
+ * Defines the contract for factories that parse Set-Cookie header strings
+ * and create Cookie instances.
  */
 interface CookieFactoryInterface
 {
     /**
-     * @param string $header
-     * @return CookieInterface
+     * Create a Cookie instance from a Set-Cookie header string.
+     *
+     * @param  string  $header  Set-Cookie header string
+     * @return CookieInterface A new Cookie instance
+     *
+     * @throws \InvalidArgumentException If the header format is invalid
      */
-    public function createCookie($header);
+    public function createCookie(string $header): CookieInterface;
 }

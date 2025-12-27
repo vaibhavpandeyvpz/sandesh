@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/sandesh package.
  *
@@ -11,86 +13,135 @@
 
 namespace Sandesh;
 
+use DateTimeInterface;
+
 /**
- * Interface CookieInterface
- * @package Sandesh
+ * Interface for HTTP cookies.
+ *
+ * Represents an HTTP cookie as defined in RFC 6265.
+ * Provides methods to access and modify cookie properties.
  */
 interface CookieInterface
 {
     /**
-     * @return string
+     * Get the domain attribute.
+     *
+     * @return string|null The domain attribute, or null if not set
      */
-    public function getDomain();
+    public function getDomain(): ?string;
 
     /**
-     * @return \DateTimeInterface
+     * Get the expiry date/time.
+     *
+     * @return DateTimeInterface|null The expiry date/time, or null if not set
      */
-    public function getExpiry();
+    public function getExpiry(): ?DateTimeInterface;
 
     /**
-     * @return string
+     * Get the Max-Age attribute.
+     *
+     * @return int The Max-Age value in seconds (0 if not set)
      */
-    public function getName();
+    public function getMaxAge(): int;
 
     /**
-     * @return string
+     * Get the cookie name.
+     *
+     * @return string The cookie name
      */
-    public function getPath();
+    public function getName(): string;
 
     /**
-     * @return string
+     * Get the path attribute.
+     *
+     * @return string|null The path attribute, or null if not set
      */
-    public function getValue();
+    public function getPath(): ?string;
 
     /**
-     * @return bool
+     * Get the cookie value.
+     *
+     * @return string|null The cookie value, or null if not set
      */
-    public function isHttpOnly();
+    public function getValue(): ?string;
 
     /**
-     * @return bool
+     * Check if the HttpOnly flag is set.
+     *
+     * @return bool Whether the HttpOnly flag is set
      */
-    public function isSecure();
+    public function isHttpOnly(): bool;
 
     /**
-     * @param string|null $domain
-     * @return static
+     * Check if the Secure flag is set.
+     *
+     * @return bool Whether the Secure flag is set
      */
-    public function withDomain($domain);
+    public function isSecure(): bool;
 
     /**
-     * @param \DateTimeInterface|string|int|null $expiry
-     * @return static
+     * Create a new instance with the specified domain.
+     *
+     * @param  string|null  $domain  The domain attribute
+     * @return static A new instance with the specified domain
      */
-    public function withExpiry($expiry);
+    public function withDomain(?string $domain): static;
 
     /**
-     * @param bool $flag
-     * @return static
+     * Create a new instance with the specified expiry.
+     *
+     * @param  DateTimeInterface|string|int|null  $expiry  The expiry date/time
+     * @return static A new instance with the specified expiry
+     *
+     * @throws \InvalidArgumentException If the expiry format is invalid
      */
-    public function withHttpOnly($flag);
+    public function withExpiry(DateTimeInterface|string|int|null $expiry): static;
 
     /**
-     * @param string $name
-     * @return static
+     * Create a new instance with the specified HttpOnly flag.
+     *
+     * @param  bool  $flag  Whether to set the HttpOnly flag
+     * @return static A new instance with the specified HttpOnly flag
      */
-    public function withName($name);
+    public function withHttpOnly(bool $flag): static;
 
     /**
-     * @param string|null $path
-     * @return static
+     * Create a new instance with the specified Max-Age.
+     *
+     * @param  int  $age  The Max-Age value in seconds
+     * @return static A new instance with the specified Max-Age
      */
-    public function withPath($path);
+    public function withMaxAge(int $age): static;
 
     /**
-     * @param bool $flag
-     * @return static
+     * Create a new instance with the specified name.
+     *
+     * @param  string  $name  The cookie name
+     * @return static A new instance with the specified name
      */
-    public function withSecure($flag);
+    public function withName(string $name): static;
 
     /**
-     * @param string|null $value
-     * @return static
+     * Create a new instance with the specified path.
+     *
+     * @param  string|null  $path  The path attribute
+     * @return static A new instance with the specified path
      */
-    public function withValue($value);
+    public function withPath(?string $path): static;
+
+    /**
+     * Create a new instance with the specified Secure flag.
+     *
+     * @param  bool  $flag  Whether to set the Secure flag
+     * @return static A new instance with the specified Secure flag
+     */
+    public function withSecure(bool $flag): static;
+
+    /**
+     * Create a new instance with the specified value.
+     *
+     * @param  string|null  $value  The cookie value
+     * @return static A new instance with the specified value
+     */
+    public function withValue(?string $value): static;
 }
